@@ -4,7 +4,7 @@ export default function Page5Lokasi() {
       <div className="lokasi-block">
         <div className="map-frame">
           <iframe
-            src="https://maps.google.com/maps?q=Jln.+Moh+Yamin+Rt.13+Rw.04,+Codo,+Wajak,+Malang&output=embed"
+            src="https://maps.google.com/maps?q=-8.1286393,112.7224661&z=17&output=embed"
             allowFullScreen
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
@@ -17,7 +17,7 @@ export default function Page5Lokasi() {
 
         <a
           className="btn-outline"
-          href="https://www.google.com/maps/search/?api=1&query=Jln.+Moh+Yamin+Rt.13+Rw.04%2C+Codo%2C+Wajak%2C+Malang"
+          href="https://www.google.com/maps/place/Sayur+segar+bu+siti+(Codo)/@-8.1286393,112.7224661,17z/data=!3m1!4b1!4m6!3m5!1s0x2dd623b5dd895357:0x73023e2cab3a1a77!8m2!3d-8.1286393!4d112.7224661!16s%2Fg%2F11vy137n7q!18m1!1e1"
           target="_blank"
           rel="noopener noreferrer"
         >
