@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-const AUDIO_SRC = "/assets/y2mate.com - New Wedding Nasheed Music Free \u0645\u062d\u0645\u062f \u0627\u0644\u0645\u0642\u064a\u0637 \u0639\u0631\u0648\u0633\u0629 \u0627\u0644\u0646\u0648\u0631 Muhammad al Muqit.mp3";
+const AUDIO_SRC = "/assets/pernikahan-kita.mp3";
 
 function IconMelody() {
   return (
