@@ -1,0 +1,660 @@
+/* ═══════════════════════════════════════════════════════════
+   Tokens
+   ═══════════════════════════════════════════════════════════ */
+:root {
+  --ratio: 9 / 16;
+  --bg-base: #eef1f6;
+  --gold: #33532f;
+  --ink: #221f1a;
+  --line: rgba(184, 141, 63, 0.86);
+  --page-pad-v: clamp(40px, 8vh, 72px);
+  --page-gap:   clamp(24px, 5vh, 48px);
+  --watercolor-bg:
+    radial-gradient(ellipse 65% 56% at -4% -4%,   rgba(90,110,140,.42) 0%, rgba(150,165,190,.22) 42%, transparent 68%),
+    radial-gradient(ellipse 60% 52% at 104% -4%,  rgba(85,105,135,.38) 0%, rgba(145,160,185,.20) 44%, transparent 70%),
+    radial-gradient(ellipse 58% 50% at -4% 104%,  rgba(80,100,130,.36) 0%, rgba(140,155,180,.18) 46%, transparent 72%),
+    radial-gradient(ellipse 63% 54% at 104% 104%, rgba(88,108,138,.40) 0%, rgba(148,163,188,.22) 43%, transparent 69%),
+    radial-gradient(ellipse 40% 36% at 50% 8%,    rgba(95,115,145,.18) 0%, transparent 58%),
+    radial-gradient(ellipse 38% 34% at 50% 92%,   rgba(75,95,125,.16) 0%, transparent 60%),
+    radial-gradient(ellipse 35% 30% at 8% 50%,    rgba(92,112,142,.15) 0%, transparent 55%),
+    radial-gradient(ellipse 37% 32% at 92% 50%,   rgba(82,102,132,.16) 0%, transparent 57%),
+    linear-gradient(145deg, rgba(195,205,220,.14) 0%, rgba(200,210,225,.10) 40%, rgba(190,200,218,.13) 100%),
+    var(--bg-base);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Reset
+   ═══════════════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  font-family: "GFS Didot", "Didot", serif;
+  color: var(--ink);
+}
+
+body {
+  background: var(--watercolor-bg);
+  background-attachment: fixed;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Overlay scrollbar — global
+   ═══════════════════════════════════════════════════════════ */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(184,141,63,.45) transparent;
+}
+*::-webkit-scrollbar        { width: 4px; height: 4px; }
+*::-webkit-scrollbar-track  { background: transparent; }
+*::-webkit-scrollbar-thumb  { background: rgba(184,141,63,.45); border-radius: 99px; }
+*::-webkit-scrollbar-thumb:hover { background: rgba(184,141,63,.75); }
+
+/* ═══════════════════════════════════════════════════════════
+   Snap container
+   ═══════════════════════════════════════════════════════════ */
+.snap-stack {
+  height: 100dvh;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  overscroll-behavior-y: contain;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Panel
+   ═══════════════════════════════════════════════════════════ */
+.panel {
+  min-height: 100dvh;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  display: grid;
+  place-items: center;
+  position: relative;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Canvas (mobile-first — full-bleed)
+   ═══════════════════════════════════════════════════════════ */
+.canvas {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: transparent;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--page-pad-v) clamp(24px, 6%, 48px);
+  gap: var(--page-gap);
+}
+
+/* Desktop: portrait 9:16 column */
+@media (min-width: 600px) {
+  body { background-attachment: fixed; }
+  .panel { position: static; }
+  .canvas {
+    position: relative;
+    inset: auto;
+    height: 100dvh;
+    aspect-ratio: var(--ratio);
+    box-shadow: none;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Typography helpers
+   ═══════════════════════════════════════════════════════════ */
+.meta {
+  font-family: "GFS Didot", "Didot", serif;
+  font-size: calc(clamp(12px, 1.55vh, 18px) * 0.9);
+  letter-spacing: 0.12em;
+  color: var(--ink);
+  text-align: center;
+  line-height: 1.6;
+}
+
+.script {
+  font-family: "Style Script", "Great Vibes", "Brush Script MT", cursive;
+  color: var(--gold);
+  font-weight: 400;
+  text-align: center;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Buttons
+   ═══════════════════════════════════════════════════════════ */
+.btn-gold {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--gold);
+  color: #fff;
+  border: none;
+  border-radius: 28px;
+  padding: clamp(10px, 1.5vh, 16px) clamp(28px, 6vw, 52px);
+  font-family: "GFS Didot", "Didot", serif;
+  font-size: calc(clamp(14px, 1.8vh, 20px) * 0.9);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+.btn-gold:hover  { opacity: 0.88; }
+.btn-gold:disabled { opacity: 0.6; cursor: default; }
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  color: var(--gold);
+  border: 1.5px solid var(--gold);
+  border-radius: 28px;
+  padding: clamp(10px, 1.5vh, 16px) clamp(28px, 6vw, 52px);
+  font-family: "GFS Didot", "Didot", serif;
+  font-size: calc(clamp(14px, 1.8vh, 20px) * 0.9);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+.btn-outline:hover { opacity: 0.78; }
+
+/* ═══════════════════════════════════════════════════════════
+   Dot nav
+   ═══════════════════════════════════════════════════════════ */
+.page-chip {
+  position: fixed;
+  right: clamp(10px, 2.2vw, 20px);
+  bottom: clamp(12px, 2.4vh, 24px);
+  z-index: 20;
+  background: rgba(255,255,255,.72);
+  border: 1px solid rgba(184,141,63,.45);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-family: "GFS Didot", "Didot", serif;
+  font-size: calc(clamp(10px, 1.3vh, 14px) * 0.9);
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: 0.08em;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  pointer-events: none;
+  user-select: none;
+}
+.page-chip-sep { margin: 0 2px; opacity: 0.55; }
+
+.dot-nav {
+  position: fixed;
+  right: clamp(10px, 2.2vw, 20px);
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  gap: 10px;
+  z-index: 20;
+}
+.dot {
+  width: 11px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 1px solid rgba(92,84,67,.5);
+  background: rgba(255,255,255,.72);
+  cursor: pointer;
+  transition: transform .2s ease, border-color .2s ease, background-color .2s ease;
+}
+.dot:hover { transform: scale(1.1); }
+.dot.is-active { border-color: var(--gold); background: var(--gold); }
+
+/* ═══════════════════════════════════════════════════════════
+   Page 1 — Cover
+   ═══════════════════════════════════════════════════════════ */
+.cover { z-index:4; display:flex; flex-direction:column; align-items:center; gap:clamp(6px,1.2vh,14px); text-align:center; }
+
+/* Background center — tepat di tengah */
+.page-bg-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  z-index: -1;
+}
+.page-bg-center--fixed {
+  position: fixed;
+  z-index: 0;
+}
+
+/* Ornamen sudut halaman 2–8 — fixed agar tidak ikut scroll */
+.wp-corner {
+  position: fixed;
+  width: clamp(180px, 40.5vw, 315px);
+  height: auto;
+  pointer-events: none;
+  z-index: 1;
+}
+.wp-corner--tl { top: 0;    left: 0; }
+.wp-corner--tr { top: 0;    right: 0; }
+.wp-corner--bl { bottom: -40px; left: -40px; width: clamp(315px, 70.9vw, 551px); }
+.wp-corner--br { bottom: -40px; right: -40px; }
+
+@media (min-width: 600px) {
+  .wp-corner      { width: clamp(140px, 23dvh, 250px); }
+  .wp-corner--bl  { width: clamp(245px, 40.25dvh, 437px); }
+}
+
+.corner {
+  position: absolute;
+  width: clamp(180px, 40.5vw, 315px); /* mobile: relatif terhadap lebar viewport */
+  height: auto;
+  z-index: 2;
+  pointer-events: none;
+}
+.corner--tl { top: -40px;  left: -40px; }
+.corner--tr { top: 0;      right: 0; }
+.corner--bl { bottom: 0;   left: 0; }
+.corner--br { bottom: -40px; right: -40px; }
+
+/* Tablet & desktop: canvas = 9:16 portrait, lebar = 56.25dvh */
+@media (min-width: 600px) {
+  .corner          { width: clamp(140px, 23dvh, 250px); } /* ~40% lebar canvas */
+  .corner--tl      { top: -3dvh;  left: -3dvh; }
+  .corner--br      { bottom: -3dvh; right: -3dvh; }
+  .corner--tr      { top: 0;      right: 0; }
+  .corner--bl      { bottom: 0;   left: 0; }
+}
+
+.cover-bg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 240%;
+  height: 240%;
+  object-fit: contain;
+  pointer-events: none;
+  z-index: 0;
+}
+.cover-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--page-gap);
+  transform: scale(0.8836);
+}
+
+.canvas--one .cover-content {
+  opacity: 0;
+  transform: scale(0.8836) translateY(24px);
+}
+.canvas--one.is-revealed .cover-content {
+  animation: cover-reveal 800ms ease-out forwards;
+}
+@keyframes cover-reveal {
+  from { opacity: 0; transform: scale(0.8836) translateY(24px); }
+  to   { opacity: 1; transform: scale(0.8836) translateY(0); }
+}
+.cover-script { font-size:calc(clamp(64px,8.4vh,112px) * 0.9); line-height:.86; margin:0; }
+.cover-guest { margin-top:clamp(12px,2.4vh,28px); display:flex; flex-direction:column; gap:clamp(4px,.8vh,8px); align-items:center; }
+.guest-name { font-size:calc(clamp(22px,2.8vh,36px) * 0.9); font-weight:700; letter-spacing:.06em; color:var(--ink); }
+
+/* ═══════════════════════════════════════════════════════════
+   Page 2 — Salam
+   ═══════════════════════════════════════════════════════════ */
+.salam-block { z-index:4; display:flex; flex-direction:column; align-items:center; gap:clamp(12px,2.2vh,26px); text-align:center; padding:0 clamp(16px,5vw,36px); }
+.salam-script { font-size:calc(clamp(58px,7.6vh,104px) * 0.9); line-height:.86; margin:0; }
+.salam-greeting { font-size:calc(clamp(14px,1.8vh,22px) * 0.9); letter-spacing:.12em; font-weight:600; }
+.salam-text { font-size:calc(clamp(13px,1.65vh,20px) * 0.9); line-height:1.75; letter-spacing:.04em; }
+
+/* ═══════════════════════════════════════════════════════════
+   Page 3 — Mempelai
+   ═══════════════════════════════════════════════════════════ */
+.mempelai-photo { width: 60%; height: auto; border-radius: 12px; z-index: 4; display: block; }
+.mempelai-block { z-index:4; display:flex; flex-direction:column; align-items:center; gap:clamp(10px,1.8vh,20px); text-align:center; }
+.person-card { display:flex; flex-direction:column; align-items:center; gap:clamp(4px,.8vh,10px); }
+.person-avatar { width:clamp(64px,9vh,100px); aspect-ratio:1; border-radius:50%; border:2px solid var(--line); background:rgba(217,154,52,.1); overflow:hidden; }
+.person-name { font-size:calc(clamp(34px,4.5vh,64px) * 0.9); line-height:.95; margin:0; }
+.person-role { font-size:calc(clamp(10px,1.3vh,15px) * 0.9); letter-spacing:.22em; font-weight:600; text-transform:uppercase; }
+.person-parents { font-size:calc(clamp(11px,1.4vh,16px) * 0.9); line-height:1.6; letter-spacing:.06em; }
+.amp-sep { font-size:calc(clamp(40px,5.2vh,72px) * 0.9); line-height:1; margin:0; }
+
+/* ═══════════════════════════════════════════════════════════
+   Page 4 — Akad Nikah
+   ═══════════════════════════════════════════════════════════ */
+.akad-block { z-index:4; display:flex; flex-direction:column; align-items:center; gap:clamp(12px,2vh,24px); text-align:center; }
+.akad-title { font-size:calc(clamp(50px,6.6vh,90px) * 0.9); line-height:.92; margin:0; }
+.date-row { display:flex; align-items:center; gap:clamp(14px,2.2vw,24px); }
+.date-day,.date-month { font-size:calc(clamp(12px,1.55vh,19px) * 0.9); letter-spacing:.15em; font-weight:500; text-align:center; }
+.date-num { font-size:calc(clamp(54px,7.2vh,96px) * 0.9); font-family:"GFS Didot","Didot",serif; font-weight:700; color:var(--gold); line-height:1; }
+.date-year { font-size:calc(clamp(12px,1.55vh,19px) * 0.9); letter-spacing:.2em; font-weight:500; }
+.date-vline { width:1px; height:clamp(34px,4.8vh,54px); background:var(--line); }
+.akad-time { font-size:calc(clamp(14px,1.8vh,22px) * 0.9); letter-spacing:.18em; }
+.akad-location-label { font-size:calc(clamp(10px,1.3vh,15px) * 0.9); letter-spacing:.28em; font-style:italic; color:var(--gold); }
+.akad-venue { font-size:calc(clamp(13px,1.7vh,21px) * 0.9); font-weight:700; letter-spacing:.1em; line-height:1.4; }
+.akad-address { font-size:calc(clamp(11px,1.4vh,17px) * 0.9); letter-spacing:.12em; opacity:.78; }
+
+/* ═══════════════════════════════════════════════════════════
+   Page 5 — Lokasi
+   ═══════════════════════════════════════════════════════════ */
+.lokasi-block { z-index:4; display:flex; flex-direction:column; align-items:center; gap:clamp(12px,2vh,22px); width:100%; text-align:center; }
+.map-frame { width:90%; aspect-ratio:4/3; border-radius:14px; overflow:hidden; border:1.5px solid var(--line); }
+.map-frame iframe { width:100%; height:100%; border:0; }
+.lokasi-venue { font-size:calc(clamp(13px,1.7vh,21px) * 0.9); font-weight:700; letter-spacing:.1em; line-height:1.4; }
+.lokasi-address { font-size:calc(clamp(11px,1.4vh,17px) * 0.9); letter-spacing:.12em; opacity:.78; margin-top:-6px; }
+
+/* ═══════════════════════════════════════════════════════════
+   Page 6 — Countdown
+   ═══════════════════════════════════════════════════════════ */
+.countdown-block { z-index:4; display:flex; flex-direction:column; align-items:center; gap:clamp(14px,2.4vh,30px); text-align:center; }
+.countdown-title { font-size:calc(clamp(50px,6.6vh,90px) * 0.9); line-height:.92; margin:0; }
+.countdown-grid { display:flex; gap:clamp(8px,1.6vw,16px); }
+.countdown-box { border:1.5px solid var(--line); border-radius:10px; padding:clamp(8px,1.3vh,14px) clamp(10px,1.8vw,18px); min-width:clamp(54px,8.5vw,78px); display:flex; flex-direction:column; align-items:center; gap:3px; }
+.countdown-num { font-size:calc(clamp(26px,3.4vh,46px) * 0.9); font-weight:700; color:var(--gold); font-family:"GFS Didot","Didot",serif; line-height:1; }
+.countdown-label { font-size:calc(clamp(9px,1.1vh,13px) * 0.9); letter-spacing:.12em; font-weight:500; text-transform:uppercase; }
+.rsvp-text { font-size:calc(clamp(12px,1.55vh,18px) * 0.9); line-height:1.65; letter-spacing:.04em; max-width:82%; }
+
+/* ═══════════════════════════════════════════════════════════
+   Page 7 — Quotes
+   ═══════════════════════════════════════════════════════════ */
+.quotes-block { z-index:4; display:flex; flex-direction:column; align-items:center; gap:clamp(20px,3.5vh,42px); text-align:center; padding:clamp(16px,3vh,36px) clamp(16px,5vw,36px); }
+.quotes-script { font-size:calc(clamp(52px,6.84vh,94px) * 0.9); line-height:1.15; margin:clamp(10px,2vh,24px) 0; }
+.quotes-surah { font-size:calc(clamp(10px,1.3vh,15px) * 0.9); letter-spacing:.22em; font-style:italic; color:var(--gold); font-weight:500; }
+.quotes-text { font-size:calc(clamp(13px,1.65vh,20px) * 0.9); line-height:1.8; letter-spacing:.03em; font-style:italic; }
+
+/* ═══════════════════════════════════════════════════════════
+   Page 8 — Buku Tamu
+   ═══════════════════════════════════════════════════════════ */
+.canvas--eight {
+  justify-content: center;
+  overflow-y: auto;
+  padding-top: clamp(32px, 5vh, 56px);
+  padding-bottom: clamp(32px, 5vh, 56px);
+  gap: clamp(14px, 2.2vh, 24px);
+}
+
+.buku-tamu-block {
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(14px, 2vh, 22px);
+  width: 100%;
+  max-width: 480px;
+  text-align: center;
+}
+
+.buku-tamu-title { font-size:calc(clamp(50px,6.6vh,90px) * 0.9); line-height:.92; margin:0; }
+
+/* ═══════════════════════════════════════════════════════════
+   Page 9 — Terima Kasih
+   ═══════════════════════════════════════════════════════════ */
+.terima-kasih-title { font-size:calc(clamp(50px,6.6vh,90px) * 0.9); line-height:.92; margin:0; }
+
+/* ═══════════════════════════════════════════════════════════
+   Page 10 — Galeri
+   ═══════════════════════════════════════════════════════════ */
+.canvas--ten { padding: 0; }
+.gallery-grid {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 64px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  z-index: 4;
+}
+.gallery-photo {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 2731 / 4096;
+  object-fit: cover;
+  border-radius: 12px;
+  display: block;
+  cursor: pointer;
+}
+
+/* ── Lightbox ── */
+.lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: rgba(10,14,20,.88);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.lightbox-image {
+  max-width: 82vw;
+  max-height: 78dvh;
+  width: auto;
+  height: auto;
+  border-radius: 12px;
+  object-fit: contain;
+  box-shadow: 0 12px 40px rgba(0,0,0,.5);
+}
+
+.lightbox-close,
+.lightbox-arrow {
+  position: absolute;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255,255,255,.15);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .2s;
+}
+.lightbox-close:hover,
+.lightbox-arrow:hover { background: rgba(255,255,255,.28); }
+
+.lightbox-close {
+  top: clamp(16px, 3vh, 28px);
+  right: clamp(16px, 4vw, 28px);
+  width: 38px;
+  height: 38px;
+  font-size: 16px;
+}
+
+.lightbox-arrow {
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+}
+.lightbox-arrow--left  { left: clamp(10px, 3vw, 22px); }
+.lightbox-arrow--right { right: clamp(10px, 3vw, 22px); }
+
+.lightbox-counter {
+  position: absolute;
+  bottom: clamp(16px, 3vh, 28px);
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255,255,255,.85);
+  font-family: "GFS Didot", "Didot", serif;
+  font-size: 12px;
+  letter-spacing: .12em;
+}
+
+.buku-tamu-form {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(8px, 1.4vh, 14px);
+  width: 90%;
+}
+
+.bt-input {
+  width: 100%;
+  padding: clamp(9px, 1.3vh, 13px) clamp(12px, 2vw, 16px);
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  background: rgba(255,255,255,.6);
+  font-family: "GFS Didot", "Didot", serif;
+  font-size: calc(clamp(13px, 1.6vh, 16px) * 0.9);
+  color: var(--ink);
+  outline: none;
+  transition: border-color .2s;
+}
+.bt-input::placeholder {
+  opacity: 0.75;
+}
+.bt-input:focus { border-color: var(--gold); }
+.bt-textarea { resize: vertical; min-height: 72px; }
+
+.bt-radio-group {
+  display: flex;
+  gap: clamp(10px, 2vw, 18px);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.bt-radio {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: calc(clamp(11px, 1.4vh, 14px) * 0.9);
+  letter-spacing: .06em;
+  cursor: pointer;
+  color: var(--ink);
+}
+.bt-radio input { accent-color: var(--gold); }
+
+.bt-error   { font-size:calc(clamp(11px,1.4vh,14px) * 0.9); color:#c0392b; letter-spacing:.04em; }
+.bt-success { font-size:calc(clamp(11px,1.4vh,14px) * 0.9); color:#27ae60; letter-spacing:.04em; }
+
+.kartu-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 1.6vh, 16px);
+  margin-top: clamp(4px, .8vh, 8px);
+}
+.kartu-item {
+  background: rgba(255,255,255,.65);
+  border: 1px solid rgba(184,141,63,.3);
+  border-radius: 14px;
+  padding: clamp(10px, 1.5vh, 16px) clamp(12px, 2vw, 18px);
+  text-align: left;
+  backdrop-filter: blur(4px);
+}
+.kartu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.kartu-nama  { font-weight:700; font-size:calc(clamp(12px,1.5vh,16px) * 0.9); color:var(--ink); }
+.kartu-hadir { font-size:calc(clamp(9px,1.1vh,12px) * 0.9); color:var(--gold); letter-spacing:.08em; white-space:nowrap; }
+.kartu-ucapan { font-size:calc(clamp(12px,1.45vh,15px) * 0.9); line-height:1.65; color:var(--ink); opacity:.85; font-style:italic; }
+.kartu-date  { font-size:calc(clamp(9px,1.1vh,12px) * 0.9); opacity:.5; margin-top:5px; letter-spacing:.06em; }
+
+/* ═══════════════════════════════════════════════════════════
+   Kartu Ucapan — chip & modal
+   ═══════════════════════════════════════════════════════════ */
+.ucapan-list-header {
+  display: flex;
+  justify-content: right;
+  align-items: center;
+  margin-bottom: 8px;
+  min-height: 26px;
+}
+
+.ucapan-chip {
+  background: #fff;
+  border: 1px solid rgba(184,141,63,.45);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-family: "GFS Didot", "Didot", serif;
+  font-size: calc(clamp(10px, 1.2vh, 13px) * 0.9);
+  color: var(--ink);
+  letter-spacing: .05em;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: opacity .2s;
+}
+.ucapan-chip:hover { opacity: .75; }
+
+.ucapan-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0,0,0,.45);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+.ucapan-modal {
+  background: var(--bg-base);
+  width: 100%;
+  max-width: 480px;
+  max-height: 72dvh;
+  border-radius: 20px 20px 0 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.ucapan-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: clamp(14px,2vh,20px) clamp(16px,4vw,24px) clamp(10px,1.4vh,14px);
+  border-bottom: 1px solid rgba(184,141,63,.25);
+  flex-shrink: 0;
+}
+
+.ucapan-modal-title {
+  font-family: "GFS Didot", "Didot", serif;
+  font-size: calc(clamp(14px,1.8vh,18px) * 0.9);
+  font-weight: 700;
+  letter-spacing: .08em;
+  color: var(--ink);
+}
+
+.ucapan-modal-close {
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: var(--ink);
+  cursor: pointer;
+  opacity: .55;
+  padding: 4px 6px;
+  line-height: 1;
+}
+.ucapan-modal-close:hover { opacity: 1; }
+
+.ucapan-modal-list {
+  overflow-y: auto;
+  padding: clamp(12px,1.8vh,18px) clamp(16px,4vw,24px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px,1.6vh,16px);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Reduced motion
+   ═══════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .snap-stack { scroll-behavior: auto; }
+  .canvas, .dot { transition: none !important; animation: none !important; }
+  .canvas--one .cover-content { opacity: 1; transform: scale(0.8836); }
+}
+
+.dt-input::placeholder { opacity: 0.75; }

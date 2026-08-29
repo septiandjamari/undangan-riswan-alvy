@@ -1,0 +1,30 @@
+[
+  {
+    "id": "1772015284176",
+    "nama": "Test",
+    "ucapan": "Bahagia selalu",
+    "hadir": "hadir",
+    "createdAt": "2026-02-25T10:28:04.176Z"
+  },
+  {
+    "id": "1772015353101",
+    "nama": "Test 2",
+    "ucapan": "Selamat atas pernikahannya ya",
+    "hadir": "hadir",
+    "createdAt": "2026-02-25T10:29:13.101Z"
+  },
+  {
+    "id": "1772394169041",
+    "nama": "Test 3",
+    "ucapan": "Semoga langgeng",
+    "hadir": "hadir",
+    "createdAt": "2026-03-01T19:42:49.041Z"
+  },
+  {
+    "id": "1772394194083",
+    "nama": "Test 4",
+    "ucapan": "Semoga menjadi pernikahan yang sakinah mawaddah warohmah",
+    "hadir": "hadir",
+    "createdAt": "2026-03-01T19:43:14.083Z"
+  }
+]
