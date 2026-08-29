@@ -33,7 +33,9 @@ export default function Page1Cover({ onOpen, ready = true }) {
           <div className="cover-guest">
             <p className="meta" style={{ letterSpacing: "0.14em" }}>Kepada Yth:</p>
             <p className="meta" style={{ letterSpacing: "0.14em" }}>Bapak/Ibu/Saudara/i</p>
-            <p className="meta guest-name">{guest?.nama ?? "Nama Tamu"}</p>
+            {guest?.nama ? <p className="meta guest-name">{guest?.nama}</p> : <p>
+            <br />  
+            </p>}
             <p className="meta" style={{ letterSpacing: "0.14em" }}>Di Tempat</p>
           </div>
 
