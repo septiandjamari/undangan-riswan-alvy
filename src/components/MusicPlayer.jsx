@@ -19,7 +19,7 @@ function IconMelodyMuted() {
   );
 }
 
-export default function MusicPlayer() {
+export default function MusicPlayer({ hidden, pageReady, coverOpened }) {
   const audioRef = useRef(null);
   const [playing, setPlaying] = useState(false);
 
@@ -28,6 +28,24 @@ export default function MusicPlayer() {
     audio.volume = 0.65;
     audio.loop   = true;
   }, []);
+
+  const attemptAutoPlay = () => {
+    const audio = audioRef.current;
+    if (!audio || !audio.paused) return;
+    audio.play().then(() => setPlaying(true)).catch(() => {});
+  };
+
+  // Coba autoplay begitu halaman selesai dimuat (berhasil di sebagian
+  // browser/desktop). Kalau diblokir kebijakan autoplay, percobaan kedua
+  // di bawah (saat tombol "Buka Undangan" diklik) yang jadi andalan utama,
+  // karena itu klik sungguhan dari pengguna.
+  useEffect(() => {
+    if (pageReady) attemptAutoPlay();
+  }, [pageReady]);
+
+  useEffect(() => {
+    if (coverOpened) attemptAutoPlay();
+  }, [coverOpened]);
 
   const toggle = () => {
     const audio = audioRef.current;
@@ -42,31 +60,33 @@ export default function MusicPlayer() {
   return (
     <>
       <audio ref={audioRef} src={AUDIO_SRC} preload="auto" />
-      <button
-        onClick={toggle}
-        title={playing ? "Jeda musik" : "Putar musik"}
-        style={{
-          position: "fixed",
-          bottom: 24,
-          left: 24,
-          zIndex: 200,
-          width: 44,
-          height: 44,
-          borderRadius: "50%",
-          border: "none",
-          cursor: "pointer",
-          background: "rgba(255,255,255,0.85)",
-          color: "#221F1A",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          boxShadow: "0 2px 12px rgba(0,0,0,0.25)",
-          backdropFilter: "blur(6px)",
-          transition: "background .2s",
-        }}
-      >
-        {playing ? <IconMelody /> : <IconMelodyMuted />}
-      </button>
+      {!hidden && (
+        <button
+          onClick={toggle}
+          title={playing ? "Jeda musik" : "Putar musik"}
+          style={{
+            position: "fixed",
+            bottom: 24,
+            left: 24,
+            zIndex: 200,
+            width: 44,
+            height: 44,
+            borderRadius: "50%",
+            border: "none",
+            cursor: "pointer",
+            background: "rgba(255,255,255,0.85)",
+            color: "#221F1A",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            boxShadow: "0 2px 12px rgba(0,0,0,0.25)",
+            backdropFilter: "blur(6px)",
+            transition: "background .2s",
+          }}
+        >
+          {playing ? <IconMelody /> : <IconMelodyMuted />}
+        </button>
+      )}
     </>
   );
 }

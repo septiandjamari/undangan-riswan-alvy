@@ -25,6 +25,7 @@ const TOTAL = 10;
 function Undangan({ ready }) {
   const { activeIndex, containerRef, scrollToPanel } = useActivePanel(TOTAL);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [coverOpened, setCoverOpened] = useState(false);
 
   useEffect(() => {
     const onKey = (e) => {
@@ -55,7 +56,7 @@ function Undangan({ ready }) {
   return (
     <>
       <main className="snap-stack" id="snapContainer" ref={containerRef}>
-        {panel(0, "Cover",          <Page1Cover onOpen={() => scrollToPanel(1)} ready={ready} />)}
+        {panel(0, "Cover",          <Page1Cover onOpen={() => { setCoverOpened(true); scrollToPanel(1); }} ready={ready} />)}
         {panel(1, "Salam",          <Page2Salam />)}
         {panel(2, "Mempelai",       <Page3Mempelai />)}
         {panel(3, "Akad Nikah",     <Page4Akad />)}
@@ -81,9 +82,9 @@ function Undangan({ ready }) {
         <>
           <DotNav total={TOTAL} activeIndex={activeIndex} onDotClick={scrollToPanel} />
           <PageChip current={activeIndex + 1} total={TOTAL} />
-          <MusicPlayer />
         </>
       )}
+      <MusicPlayer hidden={lightboxOpen} pageReady={ready} coverOpened={coverOpened} />
     </>
   );
 }
