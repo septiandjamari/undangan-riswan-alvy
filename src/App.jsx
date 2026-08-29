@@ -26,6 +26,18 @@ function Undangan({ ready }) {
   const { activeIndex, containerRef, scrollToPanel } = useActivePanel(TOTAL);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [coverOpened, setCoverOpened] = useState(false);
+  const [userInteracted, setUserInteracted] = useState(false);
+
+  // Musik butuh gesture nyata dari pengguna untuk boleh diputar browser —
+  // ini bukan hanya klik tombol "Buka Undangan", tapi interaksi apa pun
+  // (tap/scroll/keydown) di halaman, mana yang duluan terjadi.
+  useEffect(() => {
+    if (userInteracted) return;
+    const unlock = () => setUserInteracted(true);
+    const events = ["pointerdown", "touchstart", "keydown", "wheel"];
+    events.forEach((ev) => window.addEventListener(ev, unlock, { passive: true }));
+    return () => events.forEach((ev) => window.removeEventListener(ev, unlock));
+  }, [userInteracted]);
 
   useEffect(() => {
     const onKey = (e) => {
@@ -84,7 +96,12 @@ function Undangan({ ready }) {
           <PageChip current={activeIndex + 1} total={TOTAL} />
         </>
       )}
-      <MusicPlayer hidden={lightboxOpen} pageReady={ready} coverOpened={coverOpened} />
+      <MusicPlayer
+        hidden={lightboxOpen}
+        pageReady={ready}
+        coverOpened={coverOpened}
+        userInteracted={userInteracted}
+      />
     </>
   );
 }

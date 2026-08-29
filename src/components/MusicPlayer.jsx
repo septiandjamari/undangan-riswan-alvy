@@ -19,7 +19,7 @@ function IconMelodyMuted() {
   );
 }
 
-export default function MusicPlayer({ hidden, pageReady, coverOpened }) {
+export default function MusicPlayer({ hidden, pageReady, coverOpened, userInteracted }) {
   const audioRef = useRef(null);
   const [playing, setPlaying] = useState(false);
 
@@ -46,6 +46,12 @@ export default function MusicPlayer({ hidden, pageReady, coverOpened }) {
   useEffect(() => {
     if (coverOpened) attemptAutoPlay();
   }, [coverOpened]);
+
+  // Interaksi apa pun di halaman (tap/scroll/keydown) — bukan cuma klik
+  // tombol "Buka Undangan" — dianggap gesture valid untuk mulai memutar.
+  useEffect(() => {
+    if (userInteracted) attemptAutoPlay();
+  }, [userInteracted]);
 
   const toggle = () => {
     const audio = audioRef.current;
